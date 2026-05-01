@@ -1,13 +1,9 @@
 import { Sequelize } from "sequelize";
 
-// Supports both local MySQL (XAMPP) and Supabase/PostgreSQL
-// Switch dialect via DB_DIALECT env var (default: mysql)
-const dialect = process.env.DB_DIALECT || 'mysql';
-
 let connection;
 
 if (process.env.DATABASE_URL) {
-    // Supabase / any postgres connection string
+    // Supabase / PostgreSQL (production on Vercel)
     connection = new Sequelize(process.env.DATABASE_URL, {
         dialect: 'postgres',
         dialectOptions: {
@@ -19,12 +15,12 @@ if (process.env.DATABASE_URL) {
         logging: false,
     });
 } else {
-    // Local MySQL (XAMPP) fallback
-    const mysql2 = require('mysql2');
+    // Local MySQL fallback (XAMPP development)
+    const { default: mysql2 } = await import('mysql2');
     connection = new Sequelize(
         process.env.DB_NAME,
         process.env.DB_USER,
-        process.env.DB_PASS,
+        process.env.DB_PASS ?? '',
         {
             host: process.env.DB_HOST,
             dialect: 'mysql',
