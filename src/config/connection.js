@@ -1,6 +1,5 @@
 import { Sequelize } from "sequelize";
 
-// Connection is created lazily inside a function to avoid top-level await
 let _connection = null;
 
 function getConnection() {
@@ -8,8 +7,11 @@ function getConnection() {
 
     if (process.env.DATABASE_URL) {
         // Supabase / PostgreSQL (production on Vercel)
+        // Explicitly require pg to avoid "Please install pg package manually" error
+        const pg = require('pg');
         _connection = new Sequelize(process.env.DATABASE_URL, {
             dialect: 'postgres',
+            dialectModule: pg,
             dialectOptions: {
                 ssl: {
                     require: true,
@@ -37,8 +39,6 @@ function getConnection() {
     return _connection;
 }
 
-// Export a Proxy so models can use `connection.define(...)` directly
-// while connection is still lazily initialized
 const connection = new Proxy({}, {
     get(_, prop) {
         return getConnection()[prop];
