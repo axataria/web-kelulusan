@@ -42,11 +42,7 @@ const Student = connection.define('Student', {
         type : DataTypes.DATEONLY,
         allowNull : true
     },
-    kabupaten:{
-        type : DataTypes.STRING,
-        allowNull : true
-    },
-    provinsi:{
+    nama_ortu:{
         type : DataTypes.STRING,
         allowNull : true
     }

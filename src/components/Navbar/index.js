@@ -1,68 +1,82 @@
 import {
-    AlertDialog,
-    AlertDialogBody,
-    AlertDialogCloseButton, AlertDialogContent,
+    AlertDialog, AlertDialogBody, AlertDialogCloseButton, AlertDialogContent,
     AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay,
-    Box,
-    Button,
-    Flex,
-    IconButton,
-    Text, useDisclosure
+    Box, Button, Flex, IconButton, Text, useDisclosure
 } from "@chakra-ui/react";
-import {HamburgerIcon} from "@chakra-ui/icons";
-import {useRef} from "react";
-import {useRouter} from "next/router";
+import { HamburgerIcon } from "@chakra-ui/icons";
+import { useRef } from "react";
+import { useRouter } from "next/router";
 
-function Navbar({onClick}) {
-    const { isOpen, onOpen, onClose } = useDisclosure()
-    const cancelRef = useRef()
-    const router = useRouter()
+function Navbar({ onClick }) {
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const cancelRef = useRef();
+    const router = useRouter();
 
     const handleLogout = async () => {
-        await fetch('/api/auth/logout')
-        await router.push('/admin/login')
-    }
+        await fetch('/api/auth/logout');
+        await router.push('/admin/login');
+    };
 
     return (
-        <Flex px={5} py={2} bg="white" align="center" justify="space-between">
+        <Flex
+            px={5} py={3}
+            bg="white"
+            align="center"
+            justify="space-between"
+            borderBottom="1px solid"
+            borderColor="blue.100"
+            boxShadow="0 1px 8px rgba(37,99,235,0.07)"
+            position="sticky"
+            top={0}
+            zIndex={100}
+        >
             <IconButton
                 aria-label="Open Drawer"
                 size="md"
                 onClick={onClick}
                 variant="ghost"
-                colorScheme='gray'
-                icon={<HamburgerIcon color="gray.500" />}
+                colorScheme="blue"
+                icon={<HamburgerIcon color="blue.500" />}
+                borderRadius="10px"
             />
             <Box>
-                <Text fontFamily={'Lato'} fontWeight={'500'} color={'gray.500'}>Dashboard Admin</Text>
+                <Text fontFamily="Inter, sans-serif" fontWeight={600} color="blue.700" fontSize="sm" letterSpacing="0.02em">
+                    Admin Panel
+                </Text>
             </Box>
-            <Button variant="solid" colorScheme={'blue'} onClick={onOpen}>Logout</Button>
+            <Button
+                variant="solid"
+                colorScheme="blue"
+                size="sm"
+                borderRadius="8px"
+                onClick={onOpen}
+                fontWeight={600}
+            >
+                Logout
+            </Button>
+
             <AlertDialog
-                motionPreset='slideInBottom'
+                motionPreset="slideInBottom"
                 leastDestructiveRef={cancelRef}
                 onClose={onClose}
                 isOpen={isOpen}
                 isCentered
             >
                 <AlertDialogOverlay />
-
-                <AlertDialogContent>
-                    <AlertDialogHeader>Peringatan</AlertDialogHeader>
+                <AlertDialogContent borderRadius="16px">
+                    <AlertDialogHeader fontWeight={700}>Konfirmasi Logout</AlertDialogHeader>
                     <AlertDialogCloseButton />
-                    <AlertDialogBody>
+                    <AlertDialogBody color="gray.600">
                         Apakah Kamu Yakin Ingin Logout dari Sistem?
                     </AlertDialogBody>
                     <AlertDialogFooter>
-                        <Button ref={cancelRef} onClick={onClose}>
-                            Tidak
-                        </Button>
-                        <Button colorScheme='red' ml={3} onClick={handleLogout}>
-                            Ya
-                        </Button>
+                        <Button ref={cancelRef} onClick={onClose} variant="ghost">Tidak</Button>
+                        <Button colorScheme="red" ml={3} onClick={handleLogout} borderRadius="8px">Ya, Logout</Button>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
         </Flex>
     );
 }
-export default Navbar
+
+export default Navbar;

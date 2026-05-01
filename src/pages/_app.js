@@ -25,9 +25,7 @@ export default function App({ Component, pageProps,router }) {
     }
   return (
       <ChakraProvider>
-          <Flex p={2} minH={'100vh'} alignItems='center' justifyContent={'center'} backgroundImage="url('/img/background.jpg')" bgRepeat={'no-repeat'} bgPosition="center" bgSize={'cover'}>
-            <Component {...pageProps} />
-          </Flex>
+          <Component {...pageProps} />
       </ChakraProvider>
   )
 }

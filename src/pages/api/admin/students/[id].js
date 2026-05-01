@@ -49,8 +49,7 @@ export default async function handler(req,res) {
                     jurusan : req.body.jurusan,
                     status : req.body.status,
                     tgl_lahir : req.body.tgl_lahir,
-                    kabupaten : req.body.kabupaten,
-                    provinsi : req.body.provinsi
+                    nama_ortu : req.body.nama_ortu,
                 }
 
                 // count total students
