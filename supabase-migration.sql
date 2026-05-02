@@ -46,8 +46,8 @@ INSERT INTO "Profile" (npsn, nama_sekolah, judul_web, button_label, "isOpen", ke
 VALUES ('20526890', 'SMAN 1 Glagah', 'Pengumuman Kelulusan SMAN 1 Glagah', 'Cek Kelulusan', 1, 'Nama Kepala Sekolah')
 ON CONFLICT (id) DO NOTHING;
 
--- Default admin user (password: admin123 with salt 'efwefwefwefwefwefwefrregerg')
--- IMPORTANT: Replace the hash below with the correct salted-md5 hash for your SALT
+-- Default admin user
+-- Username: admin | Password: admin123
 INSERT INTO "User" (username, name, password, role)
-VALUES ('admin', 'Administrator', 'GANTI_DENGAN_HASH_PASSWORD', 'super')
+VALUES ('admin', 'Administrator', 'f1f49aecabe15f160b1ace484ba77d64', 'super')
 ON CONFLICT (username) DO NOTHING;
