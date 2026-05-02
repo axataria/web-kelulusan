@@ -1,8 +1,8 @@
 import Head from 'next/head'
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import axios from "axios";
 import { ENV } from "@/utility/const";
-import QRCode from "react-qr-code";
+
 
 // Pure-canvas confetti – no extra package needed
 function useConfetti(active) {
@@ -100,26 +100,8 @@ function InfoCard({ label, value, icon }) {
 }
 
 export default function Result({ datas, info }) {
-    const [isLoading, setLoading] = useState(false);
     const isLulus = datas?.status === 1;
     const confettiRef = useConfetti(isLulus);
-
-    async function handlerSKL() {
-        setLoading(true);
-        try {
-            const response = await axios.get('/api/student/skl', { withCredentials: true, responseType: 'blob' });
-            const blob = new Blob([response.data], { type: 'vnd.openxmlformats-officedocument.wordprocessingml.document' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = url;
-            a.download = `skl-${datas.nisn}.docx`;
-            document.body.appendChild(a);
-            a.click();
-            window.URL.revokeObjectURL(url);
-        } catch (e) { console.error(e); }
-        finally { setLoading(false); }
-    }
 
     return (
         <>
@@ -213,14 +195,7 @@ export default function Result({ datas, info }) {
                                     </span>
                                 </div>
                             </div>
-                            {isLulus && (
-                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-                                    <div style={{ background: 'white', border: '2px solid #e2e8f0', padding: '10px', borderRadius: '14px', boxShadow: '0 4px 16px rgba(0,0,0,0.08)', width: '104px', height: '104px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                        <QRCode size={256} style={{ height: 'auto', width: '100%' }} value={String(datas?.nisn ?? '')} viewBox="0 0 256 256" />
-                                    </div>
-                                    <span style={{ color: '#94a3b8', fontSize: '11px', fontWeight: 500 }}>QR Verifikasi</span>
-                                </div>
-                            )}
+
                         </div>
 
                         {/* Divider */}
@@ -233,42 +208,7 @@ export default function Result({ datas, info }) {
                             <InfoCard label="Nama Orang Tua"  value={datas?.nama_ortu} icon="👨‍👩‍👧" />
                         </div>
 
-                        {/* SKL download — lulus only */}
-                        {isLulus && (
-                            <div style={{
-                                background: '#eff6ff', border: '1.5px solid #bfdbfe',
-                                borderRadius: '14px', padding: '20px 24px',
-                                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                                flexWrap: 'wrap', gap: '14px', marginBottom: '20px',
-                            }}>
-                                <div>
-                                    <div style={{ color: '#1e293b', fontWeight: 700, fontSize: '15px', marginBottom: '3px' }}>📄 Surat Keterangan Lulus (SKL)</div>
-                                    <div style={{ color: '#64748b', fontSize: '13px' }}>Unduh SKL atau datang langsung ke sekolah</div>
-                                </div>
-                                <button
-                                    id="download-skl-btn"
-                                    onClick={handlerSKL}
-                                    disabled={isLoading}
-                                    style={{
-                                        background: isLoading ? '#93c5fd' : 'linear-gradient(135deg, #1d4ed8, #3b82f6)',
-                                        color: 'white', border: 'none', borderRadius: '10px',
-                                        padding: '11px 22px', fontWeight: 700, fontSize: '14px',
-                                        cursor: isLoading ? 'not-allowed' : 'pointer',
-                                        display: 'flex', alignItems: 'center', gap: '7px',
-                                        transition: 'all 0.2s ease', fontFamily: 'inherit',
-                                        boxShadow: '0 4px 14px rgba(37,99,235,0.3)',
-                                        whiteSpace: 'nowrap',
-                                    }}
-                                    onMouseEnter={e => { if (!isLoading) { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(37,99,235,0.4)'; } }}
-                                    onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 14px rgba(37,99,235,0.3)'; }}
-                                >
-                                    {isLoading
-                                        ? <><svg width="15" height="15" viewBox="0 0 24 24" fill="none" style={{ animation: 'rotateSlow 0.8s linear infinite' }}><circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.4)" strokeWidth="3"/><path d="M12 2a10 10 0 0 1 10 10" stroke="white" strokeWidth="3" strokeLinecap="round"/></svg>Mengunduh...</>
-                                        : <><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download SKL</>
-                                    }
-                                </button>
-                            </div>
-                        )}
+
 
                         <p style={{ color: '#94a3b8', fontSize: '12px', lineHeight: 1.7, margin: 0 }}>
                             ℹ️ Status kelulusan ditetapkan setelah Sekolah melakukan verifikasi data akademik. Silakan membaca peraturan tentang kelulusan siswa.
