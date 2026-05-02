@@ -1,22 +1,21 @@
-import Profile from "@/models/Profile";
+import supabase from "@/lib/supabase";
 
 export default async function handler(req, res) {
     switch (req.method) {
         case 'GET':
-            const datas = await Profile.findByPk(1)
-            res.status(200).json(
-                {
-                    status: 200,
-                    data: datas
-                }
-            )
+            const { data, error } = await supabase
+                .from('Profile')
+                .select('*')
+                .eq('id', 1)
+                .maybeSingle();
+
+            if (error) {
+                return res.status(500).json({ status: 500, message: error.message });
+            }
+
+            res.status(200).json({ status: 200, data })
             break
         default:
-            res.status(405).json(
-                {
-                    status: 405,
-                    message: 'Method Not Allowed'
-                }
-            )
+            res.status(405).json({ status: 405, message: 'Method Not Allowed' })
     }
 }

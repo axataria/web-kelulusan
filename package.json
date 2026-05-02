@@ -16,6 +16,7 @@
     "@fontsource/lato": "^4.5.10",
     "@next/font": "13.1.6",
     "@p4r4d0x0/captcha-generator": "^1.7.1",
+    "@supabase/supabase-js": "^2.105.1",
     "axios": "^1.2.6",
     "cookies-next": "^2.1.1",
     "docxtemplater": "^3.33.0",
