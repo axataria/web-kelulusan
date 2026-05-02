@@ -1,63 +1,66 @@
 import {error401, error405, error500} from "@/utility/errorhandler";
-import Student from "@/models/Student";
+import supabase from "@/lib/supabase";
 import multer from 'multer';
-import sequelize from "sequelize"
 import xlsx from 'xlsx';
 import {getCookie} from "cookies-next";
 import {decodeToken} from "@/utility/token";
 
-const storage = multer.memoryStorage()
-const upload = multer({storage: storage});
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 
-export default async function handler(req,res) {
-    switch (req.method){
+export default async function handler(req, res) {
+    switch (req.method) {
         case 'POST':
             try {
-                // get token
-                const token = getCookie('token-key-adm',{ req, res });
+                const token = getCookie('token-key-adm', { req, res });
                 const verify = decodeToken(token);
-                //
-                // // check if token is valid
+
                 if (verify == null) return error401(res)
 
                 upload.single('file')(req, res, async (error) => {
                     if (error) {
                         console.error(error);
-                        res.status(500).end();
+                        return res.status(500).end();
                     }
 
-                    const {buffer} = req.file;
-                    const workbook = xlsx.read(buffer, {type: 'buffer'});
+                    const { buffer } = req.file;
+                    const workbook = xlsx.read(buffer, { type: 'buffer' });
                     const firstSheet = workbook.SheetNames[0];
                     const worksheet = workbook.Sheets[firstSheet];
                     const data = xlsx.utils.sheet_to_json(worksheet);
 
-                    await Student.destroy({
-                        where :{},
-                        truncate: true
-                    })
-                    const convertedData = data.map(item => ({
-                        ...item,
-                        tgl_lahir: sequelize.fn('STR_TO_DATE', item.tgl_lahir, '%d%m%Y'),
-                    }));
-                    await Student.bulkCreate(convertedData)
+                    // Delete all existing students first
+                    const { error: deleteError } = await supabase
+                        .from('Student')
+                        .delete()
+                        .neq('nisn', '');  // matches all rows
 
-                    // Do something with the file, e.g. save to disk, process
+                    if (deleteError) {
+                        return res.status(500).json({ status: 500, message: deleteError.message });
+                    }
+
+                    // Insert new students from Excel
+                    // tgl_lahir comes from Excel as a string — Postgres accepts ISO date strings
+                    const { error: insertError } = await supabase
+                        .from('Student')
+                        .insert(data);
+
+                    if (insertError) {
+                        return res.status(500).json({ status: 500, message: insertError.message });
+                    }
+
+                    return res.status(200).json({ status: 200, message: "Import Success" });
                 });
-                // send response
-                res.status(200).json({
-                    status:200,
-                    message: "Import Success"
-                })
             } catch (err) {
-                error500(res,err.message)
+                error500(res, err.message)
             }
             break
         default:
             error405(res)
     }
 }
+
 export const config = {
     api: {
         bodyParser: false,

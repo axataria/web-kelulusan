@@ -1,28 +1,28 @@
 import {decodeToken} from "@/utility/token";
 import {error401, error405, error500} from "@/utility/errorhandler";
 import {getCookie} from "cookies-next";
-import User from "@/models/User";
+import supabase from "@/lib/supabase";
 import {hashPassword} from "@/utility/hash";
 
-export default async function handler(req,res){
+export default async function handler(req, res) {
     switch (req.method) {
         case 'GET':
             try {
-                // get token
-                const token = getCookie('token-key-adm',{ req, res });
+                const token = getCookie('token-key-adm', { req, res });
                 const verify = decodeToken(token);
 
-
-                // check if token is valid
                 if (verify == null) return error401(res)
 
-                // count total students
-                const users = await User.findAll()
+                const { data: users, error } = await supabase
+                    .from('User')
+                    .select('username, name, role, createdAt');
 
-                const formattedUsers = users.map(user => {
-                    const date = new Date(user.dataValues.createdAt);
+                if (error) return error500(res, error.message)
+
+                const formattedUsers = (users || []).map(user => {
+                    const date = new Date(user.createdAt);
                     return {
-                        ...user.dataValues,
+                        ...user,
                         createdAt: date.toLocaleDateString("en-US", {
                             day: "2-digit",
                             month: "long",
@@ -31,42 +31,40 @@ export default async function handler(req,res){
                     };
                 });
 
-                // send response
-                res.status(200).json({
-                    status:200,
-                    data:formattedUsers
-                })
+                res.status(200).json({ status: 200, data: formattedUsers })
             } catch (err) {
-                error500(res,err.message)
+                error500(res, err.message)
             }
             break
-        case 'POST':
 
+        case 'POST':
             try {
-                const data = {
-                    username : req.body.username,
-                    name : req.body.name,
-                    password : hashPassword(req.body.password),
-                    role: 'admin'
-                }
-                // get token
-                const token = getCookie('token-key-adm',{ req, res });
+                const token = getCookie('token-key-adm', { req, res });
                 const verify = decodeToken(token);
 
-                // check if token is valid
                 if (verify == null) return error401(res)
 
-                // count total students
-                const users = await User.create(data)
-                // send response
-                res.status(200).json({
-                    status:200,
-                    data:users.dataValues
-                })
+                const data = {
+                    username: req.body.username,
+                    name: req.body.name,
+                    password: hashPassword(req.body.password),
+                    role: 'admin'
+                };
+
+                const { data: newUser, error } = await supabase
+                    .from('User')
+                    .insert(data)
+                    .select('username, name, role')
+                    .single();
+
+                if (error) return error500(res, error.message)
+
+                res.status(200).json({ status: 200, data: newUser })
             } catch (err) {
-                error500(res,err.message)
+                error500(res, err.message)
             }
             break
+
         default:
             error405(res)
     }
