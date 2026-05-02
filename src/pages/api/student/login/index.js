@@ -18,7 +18,7 @@ export default async function handler(req, res) {
                     .select('*')
                     .eq('nisn', nisn)
                     .eq('tgl_lahir', birth)
-                    .single();
+                    .maybeSingle();
 
                 if (error || !student) return error404(res)
 

@@ -1,8 +1,8 @@
 import supabase from "@/lib/supabase";
-import {hashPassword} from "@/utility/hash";
-import {signToken} from "@/utility/token";
-import {error400, error404, error405, error500} from "@/utility/errorhandler";
-import {setCookie} from "cookies-next";
+import { hashPassword } from "@/utility/hash";
+import { signToken } from "@/utility/token";
+import { error400, error404, error405, error500 } from "@/utility/errorhandler";
+import { setCookie } from "cookies-next";
 
 export default async function handler(req, res) {
     switch (req.method) {
@@ -15,7 +15,11 @@ export default async function handler(req, res) {
                     .select('username, name, role')
                     .eq('username', req.body.username)
                     .eq('password', hashPassword(req.body.password))
-                    .single();
+                    .maybeSingle();
+
+                console.log('data ', user)
+                console.log('pass ', hashPassword(req.body.password))
+                console.log('err', error)
 
                 if (error || !user) return error404(res)
 
@@ -25,6 +29,7 @@ export default async function handler(req, res) {
 
                 res.status(200).json({ status: 200, message: "Login Berhasil" })
             } catch (e) {
+                console.log(e.message)
                 error500(res, e.message)
             }
             break

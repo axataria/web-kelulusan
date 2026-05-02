@@ -32,13 +32,13 @@ export default async function handler(req, res) {
                     .from('Profile')
                     .select('*')
                     .eq('id', 1)
-                    .single();
+                    .maybeSingle();
 
                 const { data: datas, error: studentError } = await supabase
                     .from('Student')
                     .select('*')
                     .eq('nisn', nisn)
-                    .single();
+                    .maybeSingle();
 
                 if (profileError || studentError || !datas || !profile) return error404(res)
 

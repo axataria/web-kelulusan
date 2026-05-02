@@ -7,7 +7,7 @@ export default async function handler(req, res) {
                 .from('Profile')
                 .select('*')
                 .eq('id', 1)
-                .single();
+                .maybeSingle();
 
             if (error) {
                 return res.status(500).json({ status: 500, message: error.message });

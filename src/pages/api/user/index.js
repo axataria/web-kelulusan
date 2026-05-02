@@ -14,7 +14,7 @@ export default async function handler(req, res) {
                 .from('User')
                 .select('username, name, role')
                 .eq('username', verify.username)
-                .single();
+                .maybeSingle();
 
             if (error || !user) return error404(res)
 

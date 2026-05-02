@@ -55,7 +55,7 @@ export default async function handler(req, res) {
                     .from('User')
                     .insert(data)
                     .select('username, name, role')
-                    .single();
+                    .maybeSingle();
 
                 if (error) return error500(res, error.message)
 
