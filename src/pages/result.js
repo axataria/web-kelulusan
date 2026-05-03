@@ -14,20 +14,20 @@ function useConfetti(active) {
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
 
-        canvas.width  = window.innerWidth;
+        canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        const COLORS = ['#2563eb','#60a5fa','#34d399','#fbbf24','#f472b6','#a78bfa','#fb923c','#38bdf8'];
+        const COLORS = ['#2563eb', '#60a5fa', '#34d399', '#fbbf24', '#f472b6', '#a78bfa', '#fb923c', '#38bdf8'];
         const pieces = Array.from({ length: 160 }, () => ({
-            x:   Math.random() * canvas.width,
-            y:   Math.random() * canvas.height - canvas.height,
-            w:   6 + Math.random() * 8,
-            h:   10 + Math.random() * 8,
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height - canvas.height,
+            w: 6 + Math.random() * 8,
+            h: 10 + Math.random() * 8,
             color: COLORS[Math.floor(Math.random() * COLORS.length)],
-            rot:  Math.random() * 360,
+            rot: Math.random() * 360,
             rotV: (Math.random() - 0.5) * 6,
-            vx:  (Math.random() - 0.5) * 3,
-            vy:  3 + Math.random() * 4,
+            vx: (Math.random() - 0.5) * 3,
+            vy: 3 + Math.random() * 4,
             opacity: 1,
         }));
 
@@ -43,8 +43,8 @@ function useConfetti(active) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             pieces.forEach(p => {
-                p.x   += p.vx;
-                p.y   += p.vy;
+                p.x += p.vx;
+                p.y += p.vy;
                 p.rot += p.rotV;
                 if (p.y > canvas.height) { p.y = -20; p.x = Math.random() * canvas.width; }
 
@@ -67,7 +67,7 @@ function useConfetti(active) {
         raf = requestAnimationFrame(draw);
 
         const onResize = () => {
-            canvas.width  = window.innerWidth;
+            canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
         };
         window.addEventListener('resize', onResize);
@@ -176,6 +176,11 @@ export default function Result({ datas, info }) {
                         padding: '32px',
                         boxShadow: '0 20px 60px rgba(37,99,235,0.1)',
                     }}>
+                        {/* Info notice — above student data */}
+                        <p style={{ color: '#64748b', fontSize: '12px', lineHeight: 1.7, margin: '0 0 20px 0', background: '#f8faff', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '10px 14px' }}>
+                            ℹ️ Berdasarkan Kriteria Kelulusan dan Rapat Pleno Kelulusan kelas 12 TP 2025/2026 hari Senin, tgl 4 Mei 2027
+                        </p>
+
                         {/* Student info row */}
                         <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', justifyContent: 'space-between', gap: '20px', marginBottom: '28px' }}>
                             <div style={{ flex: 1, minWidth: '200px' }}>
@@ -203,16 +208,34 @@ export default function Result({ datas, info }) {
 
                         {/* Info grid */}
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '10px', marginBottom: '24px' }}>
-                            <InfoCard label="Tanggal Lahir"    value={datas?.tgl_lahir}  icon="📅" />
-                            <InfoCard label="Kelas / Jurusan"  value={`${datas?.kelas ?? '-'} / ${datas?.jurusan ?? '-'}`} icon="📚" />
-                            <InfoCard label="Nama Orang Tua"  value={datas?.nama_ortu} icon="👨‍👩‍👧" />
+                            <InfoCard label="Tanggal Lahir" value={datas?.tgl_lahir} icon="📅" />
+                            <InfoCard label="Kelas" value={`${datas?.kelas ?? '-'} / ${datas?.jurusan ?? '-'}`} icon="📚" />
+                            <InfoCard label="Nama Orang Tua" value={datas?.nama_ortu} icon="👨‍👩‍👧" />
                         </div>
 
+                        {/* Congratulatory message — only shown when lulus */}
+                        {isLulus && (
+                            <div style={{
+                                marginTop: '20px',
+                                background: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)',
+                                border: '1.5px solid #86efac',
+                                borderRadius: '14px',
+                                padding: '20px 24px',
+                                textAlign: 'center',
+                            }}>
+                                <div style={{ fontSize: '28px', marginBottom: '10px' }}>🎉🎓🎊</div>
+                                <p style={{ color: '#15803d', fontWeight: 700, fontSize: '15px', margin: '0 0 8px 0', lineHeight: 1.6 }}>
+                                    Selamat atas kelulusannya
+                                </p>
+                                <p style={{ color: '#166534', fontWeight: 500, fontSize: '13px', margin: '0 0 10px 0', lineHeight: 1.8 }}>
+                                    Tetap Bersyukur dan Terus Berprestasi serta Menjaga Marwah Nama Baik Almamater Sekolah
+                                </p>
+                                <p style={{ color: '#16a34a', fontWeight: 600, fontSize: '14px', margin: 0 }}>
+                                    Terima kasih 🙏
+                                </p>
+                            </div>
+                        )}
 
-
-                        <p style={{ color: '#94a3b8', fontSize: '12px', lineHeight: 1.7, margin: 0 }}>
-                            ℹ️ Status kelulusan ditetapkan setelah Sekolah melakukan verifikasi data akademik. Silakan membaca peraturan tentang kelulusan siswa.
-                        </p>
                     </div>
                 </div>
             </div>

@@ -285,6 +285,13 @@ export default function Home({ data, isClosed }) {
 }
 
 export async function getServerSideProps() {
+    // ── Countdown gate: redirect until 4 Mei 2026 10.00 WIB ──────────────
+    const TARGET_MS = new Date('2026-05-04T10:00:00+07:00').getTime();
+    if (Date.now() < TARGET_MS) {
+        return { redirect: { destination: '/countdown', permanent: false } };
+    }
+    // ─────────────────────────────────────────────────────────────────────
+
     let data;
     try {
         const res = await axios.get(`${ENV.base}/api/info`);
