@@ -178,7 +178,7 @@ export default function Result({ datas, info }) {
                     }}>
                         {/* Info notice — above student data */}
                         <p style={{ color: '#64748b', fontSize: '12px', lineHeight: 1.7, margin: '0 0 20px 0', background: '#f8faff', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '10px 14px' }}>
-                            ℹ️ Berdasarkan Kriteria Kelulusan dan Rapat Pleno Kelulusan kelas 12 TP 2025/2026 hari Senin, tgl 4 Mei 2027
+                            ℹ️ Berdasarkan Kriteria Kelulusan dan Rapat Pleno Kelulusan kelas 12 TP 2025/2026 hari Senin, Tanggal 4 Mei 2026
                         </p>
 
                         {/* Student info row */}
